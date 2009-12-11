@@ -1,0 +1,75 @@
+<?php
+// $Id$
+/**
+ * Implementation of hook_services_method_call().
+ */
+function gaservice_services_method_call($method_name, $args, $browsing = FALSE) {
+  //  Copyright 2009 Google Inc. All Rights Reserved.
+  $GA_ACCOUNT = variable_get('GA_for_mobile_account',NULL);
+  if($GA_ACCOUNT!=NULL){
+    $GA_PIXEL = drupal_get_path('module','gaservice')."/ga.php";
+
+    function googleAnalyticsGetImageUrl() {
+      global $GA_ACCOUNT, $GA_PIXEL;
+      $url = "";
+      $url .= $GA_PIXEL . "?";
+      $url .= "utmac=" . $GA_ACCOUNT;
+      $url .= "&utmn=" . rand(0, 0x7fffffff);
+
+      $referer = $_SERVER["HTTP_REFERER"];
+      $query = $_SERVER["QUERY_STRING"];
+      $path = $_SERVER["REQUEST_URI"];
+
+      if (empty($referer)) {
+        $referer = "-";
+      }
+      $url .= "&utmr=" . urlencode($referer);
+
+      if (!empty($path)) {
+        $url .= "&utmp=" . urlencode($path);
+      }
+
+      $url .= "&guid=ON";
+
+      return $url;
+    }
+  }
+}
+
+/**
+ * Implementation of hook_services_method_call_results().
+ */
+function gaservice_services_method_call_results($method_name, $args, $browsing = FALSE, $result) {
+  if($GA_ACCOUNT!=NULL){
+    $googleAnalyticsImageUrl = googleAnalyticsGetImageUrl();
+  }
+}
+
+/**
+ * Implementation of hook_menu()
+ */
+function gaservice_menu(){
+  $items['admin/settings/gaservice'] = array(
+    'title' => t('Google Analytics Service'),
+    'description' => t('Server side GA scrips'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('gaservice_settings'),
+    'access arguments' => array('administer Google Analytics Service'),
+  );
+  return $items;
+}
+
+/**
+ * Menu callback to configure gaservice module settings.
+ */
+function gaservice_settings(){
+  $form['GA_for_mobile_account'] = array(
+    '#title' => t('Google Analytics for Mobile Account'),
+    '#description' => t('Please setup the Google Analytics for Mobile account number. You can replace "UA-XX" with "MO-XX".'),
+    '#type' => 'textfield',
+    '#size' => '10',
+    '#required' => TRUE,
+    '#default_value'=>variable_get('GA_for_mobile_account',NULL),
+  );
+  return system_settings_form($form);
+}

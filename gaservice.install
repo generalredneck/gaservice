@@ -1,0 +1,24 @@
+<?php
+// $Id$
+
+/**
+ * Implementation of hook_uninstall().
+ */ 
+function gaservice_uninstall(){
+  variable_del('GA_for_mobile_account');
+}
+
+/**
+ * Implementation of hook_requirements().
+ */
+function gaservice_requirments($phase){
+  $requirments = array();
+  if ($phase == 'install'){
+    $requirments['GA_for_mobile_account'] = array(
+      'value' => t('Google Analytics for Mobile account is not setup yet.'),
+      'severity' => REQUIREMENT_WARNING,
+      'description' => t('Please setup the Google Analytics for Mobile account number. You can replace "UA-XX" with "MO-XX".'),
+    );
+  }
+  return $requirments;
+}
