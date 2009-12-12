@@ -33,14 +33,7 @@ function gaservice_services_method_call($method_name, $args, $browsing = FALSE) 
 
       return $url;
     }
-  }
-}
-
-/**
- * Implementation of hook_services_method_call_results().
- */
-function gaservice_services_method_call_results($method_name, $args, $browsing = FALSE, $result) {
-  if($GA_ACCOUNT!=NULL){
+    
     $googleAnalyticsImageUrl = googleAnalyticsGetImageUrl();
   }
 }
