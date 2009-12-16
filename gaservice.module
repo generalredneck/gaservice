@@ -9,7 +9,7 @@ function gaservice_services_method_call($method_name, $args, $browsing = FALSE) 
   $SERVICES = variable_get('gaservice_services',NULL);
   if($GA_ACCOUNT!=NULL){
     // Check for standard services if it is set to report to GA
-    if ($SERVICES[$method_name] == NULL || $SERVICES[$method_name]!=0) {
+    if ($SERVICES[$method_name]!=0) {
       include_once drupal_get_path('module','gaservice')."/ga_mod.php";
 
       $referer = $_SERVER["HTTP_REFERER"];
