@@ -6,6 +6,7 @@
  */ 
 function gaservice_uninstall(){
   variable_del('GA_for_mobile_account');
+  variable_del('gaservice_services');
 }
 
 /**

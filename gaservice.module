@@ -6,19 +6,22 @@
 function gaservice_services_method_call($method_name, $args, $browsing = FALSE) {
   //  Copyright 2009 Google Inc. All Rights Reserved.
   $GA_ACCOUNT = variable_get('GA_for_mobile_account',NULL);
+  $SERVICES = variable_get('gaservice_services',NULL);
   if($GA_ACCOUNT!=NULL){
-    include_once drupal_get_path('module','gaservice')."/ga_mod.php";
+    // Check for standard services if it is set to report to GA
+    if ($SERVICES[$method_name] == NULL || $SERVICES[$method_name]!=0) {
+      include_once drupal_get_path('module','gaservice')."/ga_mod.php";
 
-    $referer = $_SERVER["HTTP_REFERER"];
-    $query = $_SERVER["QUERY_STRING"];
-    $path = $method_name;
+      $referer = $_SERVER["HTTP_REFERER"];
+      $query = $_SERVER["QUERY_STRING"];
+      $path = $method_name;
 
-    if (empty($referer)) {
-      $referer = "-";
+      if (empty($referer)) {
+        $referer = "-";
+      }
+      
+      trackPageView(urlencode($referer),$method_name,$GA_ACCOUNT,$utmdebug);
     }
-    
-    trackPageView(urlencode($referer),$method_name,$GA_ACCOUNT,$utmdebug);
-    
   }
 }
 
@@ -48,5 +51,20 @@ function gaservice_settings(){
     '#required' => TRUE,
     '#default_value'=>variable_get('GA_for_mobile_account',NULL),
   );
+  
+  $methods = services_get_all(); // get all avaiable services
+  foreach ($methods as $method) {
+    $form_methods[$method['#method']] = $method['#method'];
+  }
+  
+  $form['gaservice_services'] = array(
+    '#title' => t('Method access'),
+    '#description' => t('Please turn on the recording option for the services that you want to report to Google Analytics'),
+    '#type' => 'checkboxes',
+    '#multiple' => TRUE,
+    '#options' => $form_methods,
+    '#default_value'=>variable_get('gaservice_services',array()),
+  );
+  
   return system_settings_form($form);
 }

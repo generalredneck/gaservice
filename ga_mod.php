@@ -141,13 +141,6 @@
     $visitorId = getVisitorId(
         $_SERVER["HTTP_X_DCMGUID"], $account, $userAgent, $cookie);
 
-    // Always try and add the cookie to the response.
-    setrawcookie(
-        COOKIE_NAME,
-        $visitorId,
-        $timeStamp + COOKIE_USER_PERSISTENCE,
-        COOKIE_PATH);
-
     $utmGifLocation = "http://www.google-analytics.com/__utm.gif";
 
     // Construct the gif hit url.
