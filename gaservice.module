@@ -54,7 +54,7 @@ function gaservice_settings(){
   
   $methods = services_get_all(); // get all avaiable services
   foreach ($methods as $method) {
-    $form_methods[$method['#method']] = $method['#method'];
+    $form_methods[$method['method']] = $method['method'];
   }
   
   $form['gaservice_services'] = array(
