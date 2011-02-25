@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
   Copyright 2009 Google Inc. All Rights Reserved.
   Modified by Skyredwang to work with any Client (Not only browser without JS)
