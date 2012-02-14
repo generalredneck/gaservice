@@ -1,19 +1,23 @@
 <?php
+/**
+ * @file
+ * Google Analytics implemented for Services installation script.
+ */
 
 /**
- * Implementation of hook_uninstall().
+ * Implements hook_uninstall().
  */ 
-function gaservice_uninstall(){
+function gaservice_uninstall() {
   variable_del('GA_for_mobile_account');
   variable_del('gaservice_services');
 }
 
 /**
- * Implementation of hook_requirements().
+ * Implements hook_requirements().
  */
-function gaservice_requirments($phase){
+function gaservice_requirments($phase) {
   $requirments = array();
-  if ($phase == 'install'){
+  if ($phase == 'install') {
     $requirments['GA_for_mobile_account'] = array(
       'value' => t('Google Analytics for Mobile account is not setup yet.'),
       'severity' => REQUIREMENT_WARNING,
