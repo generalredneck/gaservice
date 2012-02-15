@@ -7,7 +7,8 @@
 /**
  * Implements hook_services_method_call().
  */
-function gaservice_services_method_call($method_name, $args, $browsing = FALSE) {
+function gaservice_services_request_postprocess_alter($controller, $args, $reponse) {
+  $method_name = $controller['file']['callback'];
   // Copyright 2009 Google Inc. All Rights Reserved.
   $GA_ACCOUNT = variable_get('GA_for_mobile_account', NULL);
   $SERVICES = variable_get('gaservice_services', NULL);
@@ -24,7 +25,7 @@ function gaservice_services_method_call($method_name, $args, $browsing = FALSE) 
         $referer = "-";
       }
 
-      trackPageView(urlencode($referer), $method_name, $GA_ACCOUNT, $utmdebug);
+      trackPageView(urlencode($referer), $path, $GA_ACCOUNT, $utmdebug);
     }
   }
 }
@@ -57,9 +58,8 @@ function gaservice_settings() {
   );
 
   // Get all avaiable services.
-  $methods = services_get_all();
-  foreach ($methods as $method) {
-    $form_methods[$method['method']] = $method['method'];
+  foreach (services_endpoint_load_all() as $method) {
+    $form_methods[$method->name] = $method->name;
   }
 
   $form['gaservice_services'] = array(
