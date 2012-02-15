@@ -8,13 +8,28 @@
  * Implements hook_services_method_call().
  */
 function gaservice_services_request_postprocess_alter($controller, $args, $reponse) {
-  $method_name = $controller['file']['callback'];
+  $method_name = "";
   // Copyright 2009 Google Inc. All Rights Reserved.
-  $GA_ACCOUNT = variable_get('GA_for_mobile_account', NULL);
-  $SERVICES = variable_get('gaservice_services', NULL);
-  if ($GA_ACCOUNT != NULL) {
+  $ga_account = variable_get('GA_for_mobile_account', NULL);
+  $services = variable_get('gaservice_services', NULL);
+  foreach ($services as $service) {
+    if ($service == '0') {
+      continue;
+    }
+    foreach (services_controllers_list($service) as $controller_name) {
+      $resource = services_controller_get($controller_name, $service);
+      if ($resource['callback'] == $controller['callback']) {
+        $method_name = $controller_name;
+        break;
+      }
+    }
+    if (!empty($method_name)) {
+      break;
+    }
+  }
+  if ($ga_account != NULL) {
     // Check for standard services if it is set to report to GA.
-    if ($SERVICES[$method_name] != '0') {
+    if (!empty($method_name)) {
       include_once drupal_get_path('module', 'gaservice') . "/ga_mod.php";
 
       $referer = $_SERVER["HTTP_REFERER"];
@@ -25,7 +40,7 @@ function gaservice_services_request_postprocess_alter($controller, $args, $repon
         $referer = "-";
       }
 
-      trackPageView(urlencode($referer), $path, $GA_ACCOUNT, $utmdebug);
+      trackPageView(urlencode($referer), $path, $ga_account, $utmdebug);
     }
   }
 }
