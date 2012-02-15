@@ -8,22 +8,24 @@
  * Implements hook_services_method_call().
  */
 function gaservice_services_request_postprocess_alter($controller, $args, $reponse) {
+  $menu = menu_get_item();
+  $service = $menu['page_arguments'][0];
+  $allowed_services = variable_get('gaservice_services', NULL);
+  if ($allowed_services[$service] == '0') {
+    return;
+  }
   $method_name = "";
   // Copyright 2009 Google Inc. All Rights Reserved.
   $ga_account = variable_get('GA_for_mobile_account', NULL);
-  $services = variable_get('gaservice_services', NULL);
-  foreach ($services as $service) {
-    if ($service == '0') {
-      continue;
-    }
-    foreach (services_controllers_list($service) as $controller_name) {
-      $resource = services_controller_get($controller_name, $service);
-      if ($resource['callback'] == $controller['callback']) {
-        $method_name = $controller_name;
-        break;
-      }
-    }
-    if (!empty($method_name)) {
+
+  /* TODO: Devise a better way to match the method name of the call.
+       This way will pick the first with the same callback function.
+       However, this doesn't seem to be common practice.*/
+  foreach (services_controllers_list($service) as $controller_name) {
+    $resource = services_controller_get($controller_name, $service);
+
+    if ($resource['callback'] == $controller['callback']) {
+      $method_name = $service . "/" . $controller_name;
       break;
     }
   }
