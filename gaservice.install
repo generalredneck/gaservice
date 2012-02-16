@@ -6,10 +6,11 @@
 
 /**
  * Implements hook_uninstall().
- */ 
+ */
 function gaservice_uninstall() {
   variable_del('GA_for_mobile_account');
   variable_del('gaservice_services');
+  variable_del('queue_class_gaservice');
 }
 
 /**
@@ -25,4 +26,11 @@ function gaservice_requirments($phase) {
     );
   }
   return $requirments;
+}
+
+/**
+ * Implements hook_install().
+ */
+function gaservice_install() {
+  variable_set('queue_class_gaservice', 'MemoryQueue');
 }

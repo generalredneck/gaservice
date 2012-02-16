@@ -5,7 +5,7 @@
 **/
 
   // Tracker version.
-  define("VERSION", "4.4sh");
+  define("GAVERSION", "4.4sh");
 
   define("COOKIE_NAME", "__utmmobile");
 
@@ -144,7 +144,7 @@
 
     // Construct the gif hit url.
     $utmUrl = $utmGifLocation . "?" .
-        "utmwv=" . VERSION .
+        "utmwv=" . GAVERSION .
         "&utmn=" . getRandomNumber() .
         "&utmhn=" . urlencode($domainName) .
         "&utmr=" . urlencode($documentReferer) .
