@@ -84,22 +84,8 @@
 
   // Make a tracking request to Google Analytics from this server.
   // Copies the headers from the original request to the new one.
-  // If request containg utmdebug parameter, exceptions encountered
-  // communicating with Google Analytics are thown.
   function sendRequestToGoogleAnalytics($utmUrl) {
-    $options = array(
-      "http" => array(
-          "method" => "GET",
-          "user_agent" => $_SERVER["HTTP_USER_AGENT"],
-          "header" => ("Accepts-Language: " . $_SERVER["HTTP_ACCEPT_LANGUAGE"]))
-    );
-    if (!empty($utmdebug)) {
-      $data = file_get_contents(
-          $utmUrl, false, stream_context_create($options));
-    } else {
-      $data = @file_get_contents(
-          $utmUrl, false, stream_context_create($options));
-    }
+    gaservice_request_async($utmUrl,array(),'GET');
   }
 
   // Track a page view, updates all the cookies and campaign tracker,

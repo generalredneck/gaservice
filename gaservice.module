@@ -134,3 +134,25 @@ function gaservice_settings() {
   );
   return system_settings_form($form);
 }
+
+/**
+ * Helper function that allows a request to be made and immediatly dropped to
+ *   move on to the next one.
+ * @see http://stackoverflow.com/a/3945465
+ */
+function gaservice_request_async($url) {
+  $parts = parse_url($url);
+  $fp = fsockopen($parts['host'],
+      isset($parts['port'])?$parts['port']:80,
+      $errno, $errstr, 30);
+  // Data goes in the path for a GET request.
+  $parts['path'] .= '?' . $parts['query'];
+  $out = 'GET ' . $parts['path'] . " HTTP/1.1\r\n";
+  $out .= 'Host: ' . $parts['host'] . "\r\n";
+  $out .= 'User-Agent: ' . $_SERVER["HTTP_USER_AGENT"] . "\r\n";
+  $out .= 'Accepts-Language: ' . $_SERVER['HTTP_ACCEPT_LANGUAGE'] . "\r\n";
+  $out .= "Connection: Close\r\n\r\n";
+
+  fwrite($fp, $out);
+  fclose($fp);
+}
