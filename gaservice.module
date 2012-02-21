@@ -8,6 +8,11 @@
  * Implements services_request_postproces_alter.
  */
 function gaservice_services_request_postprocess_alter($controller, $args, $reponse) {
+  $ga_account = variable_get('GA_for_mobile_account', NULL);
+  if (empty($ga_account)) {
+    return;
+  }
+
   $menu = menu_get_item();
   $service = $menu['page_arguments'][0];
   $allowed_services = variable_get('gaservice_services', NULL);
@@ -16,7 +21,6 @@ function gaservice_services_request_postprocess_alter($controller, $args, $repon
   }
   $method_name = '';
   // Copyright 2009 Google Inc. All Rights Reserved.
-  $ga_account = variable_get('GA_for_mobile_account', NULL);
 
   /* TODO: Devise a better way to match the method name of the call.
        This way will pick the first with the same callback function.
@@ -29,16 +33,14 @@ function gaservice_services_request_postprocess_alter($controller, $args, $repon
       break;
     }
   }
-  if ($ga_account != NULL) {
-    // Check for standard services if it is set to report to GA.
-    if (!empty($method_name)) {
-      $queue = DrupalQueue::get('gaservice');
-      $queue->createItem(array(
-        'referer' => $_SERVER['HTTP_REFERER'],
-        'query' => $_SERVER['QUERY_STRING'],
-        'path' => $service . '/' . $method_name,
-      ));
-    }
+  // Check for standard services if it is set to report to GA.
+  if (!empty($method_name)) {
+    $queue = DrupalQueue::get('gaservice');
+    $queue->createItem(array(
+      'referer' => $_SERVER['HTTP_REFERER'],
+      'query' => $_SERVER['QUERY_STRING'],
+      'path' => $service . '/' . $method_name,
+    ));
   }
 }
 
